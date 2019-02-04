@@ -1,0 +1,8 @@
+tensorflow
+pandas
+stringdist
+scikit-learn
+tqdm
+bert-serving-client
+bert-serving-server
+sentencepiece
