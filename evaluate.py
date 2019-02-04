@@ -7,14 +7,8 @@ from bert_serving.client import BertClient
 import stringdist as sd
 import thai_tokenization as tkn
 import argparse
-# Base multilingual model
-# bert-serving-start -model_dir=./multi_cased_L-12_H-768_A-12 -num_worker=4
 
-# Base multilingual fine tuned model
-# bert-serving-start -model_dir=./multi_cased_L-12_H-768_A-12 -tuned_model_dir=./1000_steps_models -ckpt_name=model.ckpt-1100 -num_worker=4
 
-# Base thai only model
-# bert-serving-start -model_dir=./bert_base_th_modified -num_worker=4
 parser = argparse.ArgumentParser()
 parser.add_argument('--nparray_path', required=True, type=str, help="Numpy array file (.npy) of pre-embed sentences path")
 parser.add_argument('--excel_path', required=True, type=str, help="Excel dataset file path")
@@ -22,10 +16,9 @@ parser.add_argument('--thai_model', action='store_true', help="For thai model")
 parser.add_argument('test_size', default=0.25, help="Test set size")
 args = parser.parse_args()
 
-
 random_state = 0
 
-
+root = os.getcwd()
 bc = BertClient()
 df = pd.read_excel(args.excel_path)
 df['bert'] = np.load(args.nparray_path).tolist()
@@ -35,8 +28,8 @@ feat = np.vstack(train_set['bert'].values)
 nfeat = normalize(feat)
 
 tokenizer = tkn.ThaiTokenizer(
-    'models/bert_base_th/th.wiki.bpe.op25000.vocab',
-    'models/bert_base_th/th.wiki.bpe.op25000.model')
+    os.path.join(root, 'models', 'bert_base_th', 'th.wiki.bpe.op25000.vocab'),
+    os.path.join(root, 'models', 'bert_base_th', 'th.wiki.bpe.op25000.model'))
 
 def query_nearest(nsentence, thai_model=False):
     if args.thai_model:

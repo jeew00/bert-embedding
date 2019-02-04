@@ -1,4 +1,4 @@
-# Bert Embedding and evaluation
+# Bert embedding and evaluation
 
 ## Quickstart
 1. Create ```models``` directory and download all the models in it
