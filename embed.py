@@ -8,19 +8,18 @@ from bert_serving.client import BertClient
 
 
 parser = argparse.ArgumentParser()
-parser.add_argument('--model', required=True, type=str, help="MODEL = thai or multi")
+parser.add_argument('--model_lang', required=True, type=str, help="MODEL = thai or multi")
 parser.add_argument('--ckpt', required=True, type=int, help="Checkpoint number (int)")
-parser.add_argument('--excel_path', required=True, type=str, help="path to excel dataset")
 args = parser.parse_args()
 
 def main():
     root = os.getcwd()
     print('************** READING EXCEL **************')
-    df = pd.read_excel(args.excel_path)
+    df = pd.read_excel(os.path.join('datasets', 'botnoi-api', 'botnoi_api_cleaned_v2.xlsx'))
     keywords = df['Keyword'].tolist()
     is_thai = False
     print('************** DONE **************')
-    if args.model == 'thai':
+    if args.model_lang == 'thai':
         print('************** TOKENIZING **************')
         is_thai = True
         tokenizer = tkn.ThaiTokenizer(
@@ -33,9 +32,9 @@ def main():
         bert_embedded = bc.encode(keywords, is_tokenized=is_thai)
         print('************** DONE **************')
     print('************** SAVING **************')
-    np.save(os.path.join(root, 'datasets', 'botnoi-api', '{}-ckpt-{}.npy'.format(args.model, args.ckpt)), bert_embedded)
+    np.save(os.path.join(root, 'datasets', 'botnoi-api', '{}-ckpt-{}.npy'.format(args.model_lang, args.ckpt)), bert_embedded)
     print('************** DONE **************')
 
 if __name__ == '__main__':
-    assert (args.model == 'thai') or (args.model == 'multi')
+    assert (args.model_lang == 'thai') or (args.model_lang == 'multi')
     main()
